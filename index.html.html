@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arsip Quest: Office Archive Academy</title>
+<style>
+:root{
+  --bg:#f4f7ff;--card:#ffffff;--ink:#172033;--muted:#596579;--primary:#3157d5;
+  --primary2:#7c5cff;--teal:#08a889;--cyan:#23b7d8;--gold:#f4b942;--danger:#d83b57;
+  --success:#0d8a61;--line:#dbe2f0;--shadow:0 16px 38px rgba(32,48,88,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(135deg,#f6f8ff 0%,#eef6ff 45%,#effbf7 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(219,226,240,.9);padding:12px 18px}
+.topbar-inner{max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#3157d5,#7c5cff 52%,#23b7d8);display:grid;place-items:center;color:white;font-size:22px;box-shadow:0 8px 18px rgba(70,77,210,.28)}
+.brand{font-weight:800;line-height:1.1}.brand small{display:block;color:#596579;font-weight:600;font-size:11px;margin-top:3px}
+.spacer{flex:1}.pill{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.9);font-weight:800;font-size:13px;color:#24304a;box-shadow:0 4px 12px rgba(40,58,100,.06)}
+.progress-wrap{max-width:1100px;margin:10px auto 0;height:8px;background:#e4e9f3;border-radius:20px;overflow:hidden}.progress{height:100%;background:linear-gradient(90deg,#3157d5,#7c5cff,#23b7d8,#08a889);width:0%;transition:.4s}
+main{max-width:1000px;margin:auto;padding:28px 18px 70px}
+.screen{display:none}.screen.active{display:block}
+.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:20px;align-items:stretch}
+.card{background:rgba(255,255,255,.96);border:1px solid rgba(219,226,240,.95);border-radius:24px;padding:26px;box-shadow:var(--shadow)}
+.hero h1{font-size:clamp(30px,5vw,52px);line-height:1.02;margin:10px 0 14px;letter-spacing:-1.5px;color:#121b31}
+.hero p{color:#4f5d73;font-size:16px;line-height:1.65}
+.eyebrow{display:inline-flex;gap:7px;align-items:center;color:#2447bd;font-weight:850;font-size:13px;background:linear-gradient(135deg,#edf1ff,#f2edff);padding:7px 10px;border-radius:999px;border:1px solid #d9defc}
+.btn{border:0;border-radius:14px;padding:13px 17px;font-weight:850;transition:.2s;min-height:46px}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.02)}
+.btn.outline{background:#fff;color:#2447bd;border:1px solid #b9c6ee}.nav-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.feedback .step{margin-top:8px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.72);color:inherit;border:1px solid rgba(0,0,0,.06)}
+.attempt-note{font-size:12px;color:inherit;margin-top:9px}.btn.primary{background:linear-gradient(135deg,#3157d5,#6c5ce7);color:white;box-shadow:0 7px 16px rgba(49,87,213,.22)}.btn.secondary{background:#edf1f7;color:#1d2940}.btn.success{background:#dff7ec;color:#08724f}.btn:disabled{opacity:.48;cursor:not-allowed;transform:none}
+.hero-art{display:grid;place-items:center;background:linear-gradient(145deg,#101f55 0%,#3157d5 45%,#7c5cff 72%,#23b7d8 100%);color:#fff;min-height:310px;position:relative;overflow:hidden;box-shadow:0 18px 38px rgba(49,87,213,.24)}
+.hero-art:before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),rgba(255,255,255,0) 68%);left:-80px;top:-100px}
+.hero-art:after{content:"";position:absolute;width:250px;height:250px;border-radius:50%;border:42px solid rgba(255,255,255,.11);right:-80px;bottom:-90px}
+.folder{font-size:100px;filter:drop-shadow(0 16px 16px rgba(0,0,0,.28));z-index:1}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.stat{background:linear-gradient(135deg,#f8faff,#f2f7ff);border:1px solid #e2e8f5;border-radius:16px;padding:15px;text-align:center}.stat b{font-size:23px;display:block;color:#263d9c}.stat span{font-size:12px;color:#596579;font-weight:600}
+.map{display:grid;gap:12px;margin-top:20px}.mission{display:flex;align-items:center;gap:15px;padding:17px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,#fff,#f8faff)}.mission.locked{opacity:.55}.mission-icon{width:45px;height:45px;border-radius:14px;background:linear-gradient(135deg,#edf1ff,#f1ebff);display:grid;place-items:center;font-size:20px}.mission.done .mission-icon{background:linear-gradient(135deg,#dff8ee,#e7fbf7)}.mission-info{flex:1}.mission-info b{display:block;color:#18233a}.mission-info small{color:#596579}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}.back{background:none;border:0;color:#526079;font-weight:800}.qcount{margin-left:auto;color:#526079;font-size:13px;font-weight:700}
+.question-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
+.case{background:linear-gradient(135deg,#f0f4ff,#eefbfa);border-left:5px solid #3157d5;padding:15px 16px;border-radius:12px;color:#273550;line-height:1.6;margin:15px 0}
+.option-grid{display:grid;gap:11px;margin-top:18px}.option{padding:15px;text-align:left;border:2px solid #d9e0ec;background:#fff;border-radius:15px;line-height:1.5;color:#18243a;font-weight:600;box-shadow:0 3px 10px rgba(35,55,95,.04)}.option b{color:#2949b8}.option:hover{border-color:#7c8fe0;background:#f8faff}.option.selected{border-color:#3157d5;background:linear-gradient(135deg,#eef2ff,#f3efff);color:#17244b}.option.correct{border-color:#0d8a61;background:linear-gradient(135deg,#e8fbf3,#effcf8);color:#075e44}.option.correct b{color:#08724f}.option.wrong{border-color:#d83b57;background:linear-gradient(135deg,#fff0f3,#fff6f7);color:#721f31}.option.wrong b{color:#b42d46}
+.feedback{margin-top:15px;padding:15px;border-radius:15px;line-height:1.55;display:none;font-weight:550}.feedback.show{display:block}.feedback.good{background:linear-gradient(135deg,#e6faf2,#effcf8);color:#075e44;border:1px solid #a9e7cf}.feedback.bad{background:linear-gradient(135deg,#fff0f3,#fff7f8);color:#721f31;border:1px solid #f0b7c2}.feedback .step{color:inherit}
+.explain{margin-top:10px;font-size:13px;color:#596579}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tag{display:inline-block;padding:6px 9px;border-radius:8px;background:linear-gradient(135deg,#eaf0ff,#f0ebff);color:#2447bd;font-size:11px;font-weight:850;border:1px solid #d9defc}
+.result{text-align:center}.score-big{font-size:64px;font-weight:900;background:linear-gradient(90deg,#3157d5,#7c5cff,#23a9d8);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+.badges{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:20px 0}.badge{padding:12px 14px;border-radius:15px;background:linear-gradient(135deg,#f8faff,#f1efff);border:1px solid #dce2f2;font-weight:850;color:#27345c}
+.breakdown{text-align:left;display:grid;gap:10px;margin-top:20px}.break{padding:14px;border-radius:14px;background:linear-gradient(135deg,#f8faff,#f5fbfa);border:1px solid #e0e7f2;color:#1d2940}.bar{height:8px;background:#e1e7f1;border-radius:20px;overflow:hidden;margin-top:7px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#3157d5,#7c5cff,#08a889)}
+.note{font-size:13px;color:#596579;line-height:1.6}
+h2,h3{color:#18233a}
+@media(max-width:760px){
+ .topbar{padding:10px 12px}.brand small{display:none}.pill{padding:7px 9px;font-size:12px}
+ main{padding:18px 12px 50px}.hero{grid-template-columns:1fr}.hero-art{min-height:180px;order:-1}.folder{font-size:70px}
+ .card,.question-card{padding:19px;border-radius:19px}.stats{grid-template-columns:repeat(3,1fr)}.two-col{grid-template-columns:1fr}
+ .mission{padding:14px}.mission-info small{font-size:11px}
+}
+
+/* ===== Visual enhancement: SMK Fase F ===== */
+.visual-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.visual-card{position:relative;min-height:145px;border-radius:20px;overflow:hidden;border:1px solid rgba(219,226,240,.95);box-shadow:0 12px 28px rgba(32,48,88,.10);background:#eaf0ff}
+.visual-card img{width:100%;height:100%;min-height:145px;object-fit:cover;display:block;transition:transform .35s ease}
+.visual-card:hover img{transform:scale(1.05)}
+.visual-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,28,73,.04),rgba(13,28,73,.72))}
+.visual-label{position:absolute;z-index:2;left:14px;right:14px;bottom:12px;color:#fff;font-weight:850;font-size:14px;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.hero-art{background:linear-gradient(135deg,rgba(16,31,85,.78),rgba(49,87,213,.55)),url("https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&q=85") center/cover}
+.hero-badge{position:absolute;z-index:3;top:16px;left:16px;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.9);color:#203477;font-size:12px;font-weight:850;box-shadow:0 7px 18px rgba(0,0,0,.12)}
+.learning-banner{margin-top:18px;display:flex;align-items:center;gap:15px;padding:17px 18px;border-radius:18px;background:linear-gradient(135deg,#edf3ff,#effbf8);border:1px solid #dce5f4}
+.learning-banner .mini-icon{width:48px;height:48px;flex:none;border-radius:15px;display:grid;place-items:center;background:#fff;font-size:24px;box-shadow:0 7px 18px rgba(49,87,213,.10)}
+.mission-thumb{width:62px;height:48px;border-radius:13px;overflow:hidden;flex:none;border:1px solid #dfe5f1;background:#edf1ff}
+.mission-thumb img{width:100%;height:100%;object-fit:cover}
+@media(max-width:760px){.visual-strip{grid-template-columns:1fr}.visual-card,.visual-card img{min-height:125px}.learning-banner{align-items:flex-start}.mission-thumb{display:none}}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="logo">📁</div>
+    <div class="brand">Arsip Quest<small>Office Archive Academy • SMK Fase F</small></div>
+    <div class="spacer"></div>
+    <div class="pill">⭐ <span id="xp">0</span> XP</div>
+    <div class="pill">❤️ <span id="hearts">3</span></div>
+    <div class="pill">🔥 <span id="streak">0</span></div>
+  </div>
+  <div class="progress-wrap"><div class="progress" id="globalProgress"></div></div>
+</header>
+
+<main>
+<section id="home" class="screen active">
+ <div class="hero">
+  <div class="card">
+   <span class="eyebrow">🏫 Simulasi Kearsipan • SMK Fase F</span>
+   <h1>Selamat datang di Office Archive Academy.</h1>
+   <p>Jadilah <b>Archive Trainee</b>. Pecahkan kasus kantor, tentukan kelompok dan lokasi arsip, temukan kesalahan penyimpanan, lalu pertahankan keputusanmu dengan alasan yang tepat.</p>
+   <div class="nav-actions"><button class="btn primary" onclick="startGame()">Mulai</button><button class="btn outline" onclick="show('map')">Kembali ke Peta</button></div>
+   <div class="stats">
+    <div class="stat"><b>5</b><span>Unit Bertahap</span></div><div class="stat"><b>15</b><span>Misi Kasus</span></div><div class="stat"><b>20–30</b><span>Menit</span></div>
+   </div>
+  </div>
+  <div class="card hero-art"><div class="hero-badge">SMK • Fase F</div><div class="folder">🗂️</div></div>
+ </div>
+  <div class="visual-strip">
+   <div class="visual-card">
+    <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=900&q=85" alt="Dokumen dan alat tulis kantor" loading="lazy">
+    <div class="visual-label">📄 Dokumen &amp; Arsip</div>
+   </div>
+   <div class="visual-card">
+    <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=900&q=85" alt="Ruang kerja perkantoran modern" loading="lazy">
+    <div class="visual-label">💻 Lingkungan Kerja Modern</div>
+   </div>
+   <div class="visual-card">
+    <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=900&q=85" alt="Siswa belajar menggunakan laptop" loading="lazy">
+    <div class="visual-label">🎓 Belajar Aktif Fase F</div>
+   </div>
+  </div>
+  <div class="learning-banner">
+   <div class="mini-icon">✨</div>
+   <div><b>Belajar seperti di dunia kerja</b><div class="note">Latih ketelitian, pengelompokan, penyimpanan, dan pemeriksaan arsip melalui kasus-kasus kantor yang interaktif.</div></div>
+  </div>
+  
+ <div class="card" style="margin-top:18px">
+  <h3>🎯 Target pembelajaran</h3>
+  <p class="note">Setelah bermain, siswa mampu menentukan kelompok dan lokasi penyimpanan arsip berdasarkan aturan sistem yang diberikan, menemukan kesalahan penyimpanan, memperbaiki keputusan, serta menjelaskan alasan keputusan pada kasus kantor.</p>
+ </div>
+</section>
+
+<section id="map" class="screen">
+ <div class="card">
+  <span class="eyebrow">🧭 Quest Map</span><h2>Perjalanan Archive Trainee</h2>
+  <p class="note">Selesaikan unit secara berurutan. XP, badge, streak, dan progres hanya berfungsi sebagai motivasi; bukti pemahaman utama berasal dari ketepatan keputusan, pemeriksaan, perbaikan, dan alasan yang diberikan.</p>
+  <div class="map" id="missionMap"></div><div class="nav-actions"><button class="btn secondary" onclick="showReport()">Laporan Belajar Siswa</button><button class="btn outline" onclick="restart()">Reset</button></div>
+ </div>
+</section>
+
+<section id="game" class="screen">
+ <div class="game-head"><button class="back" onclick="show('map')">← Peta</button><b id="missionTitle">Mission</b><span class="qcount" id="qcount"></span></div>
+ <div class="question-card">
+  <span class="tag" id="skillTag"></span>
+  <h2 id="question"></h2>
+  <div class="case" id="caseText"></div>
+  <div class="option-grid" id="options"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="nav-actions" style="margin-top:16px">
+   <button class="btn secondary" id="hintBtn" onclick="showHint()">Petunjuk</button>
+   <button class="btn outline" id="feedbackBtn" onclick="showFeedback()">Lihat Feedback</button><button class="btn secondary" id="retryBtn" onclick="retryQuestion()" disabled>Coba Lagi</button>
+   <button class="btn primary" id="nextBtn" onclick="nextQuestion()" disabled>Lanjut</button>
+   <button class="btn secondary" onclick="show('map')">Kembali ke Peta</button>
+  </div>
+ </div>
+</section>
+
+<section id="report" class="screen">
+ <div class="card">
+  <span class="eyebrow">📊 Laporan Belajar</span><h2>Ringkasan proses belajar siswa</h2>
+  <p class="note">Laporan ini membaca ketepatan keputusan dan proses mencoba, bukan XP, streak, atau kecepatan menjawab.</p>
+  <div class="breakdown" id="learningReport"></div>
+  <div class="nav-actions"><button class="btn secondary" onclick="show('map')">Kembali ke Peta</button><button class="btn primary" onclick="show('result')">Lanjut ke Hasil</button><button class="btn outline" onclick="restart()">Reset</button></div>
+ </div>
+</section>
+
+<section id="result" class="screen">
+ <div class="card result">
+  <span class="eyebrow">🏆 Quest Complete</span>
+  <h1>Arsip berhasil diamankan!</h1>
+  <div class="score-big" id="scoreBig">0%</div>
+  <p id="resultText"></p>
+  <p class="note">XP, hati, dan streak adalah elemen motivasi. Bukti pemahaman utama adalah ketepatan identifikasi, perbandingan pilihan, keputusan lokasi, pemeriksaan kesalahan, perbaikan, dan pilihan alasan. Beberapa misi secara eksplisit meminta <b>alasan utama</b> agar guru dapat membaca dasar berpikir pengguna.</p>
+  <div class="badges" id="badges"></div>
+  <div class="breakdown" id="breakdown"></div>
+  <div class="nav-actions" style="justify-content:center"><button class="btn primary" onclick="restart()">Reset</button><button class="btn secondary" onclick="show('map')">Kembali ke Peta</button></div>
+ </div>
+</section>
+</main>
+</div>
+
+<script>
+const missions=[
+ {title:"Unit Abjad",icon:"🔤",skill:"Mengenali nama arsip, membandingkan urutan, dan menentukan lokasi",qs:[
+  {q:"Baca konteks. Petugas menerima tiga map: <b>PT Arjuna</b>, <b>PT Bintang</b>, dan <b>PT Cakra</b>. Aturan: arsip disusun berdasarkan nama perusahaan dari A–Z. Kelompok nama arsip yang tepat adalah…",c:"<b>Informasi kasus:</b> yang digunakan untuk pengurutan adalah nama perusahaan.",o:["Arjuna, Bintang, Cakra","Cakra, Arjuna, Bintang","Bintang, Cakra, Arjuna","Arjuna, Cakra, Bintang"],a:0,e:"Urutan nama mengikuti abjad: A → B → C.",h:"Identifikasi huruf awal setiap nama."},
+  {q:"Bandingkan kondisi rak berikut: <b>PT Arjuna → PT Cakra → PT Bintang</b>. Berdasarkan aturan A–Z, pasangan arsip mana yang menunjukkan kesalahan urutan?",c:"<b>Aturan:</b> nama yang dimulai B harus berada sebelum nama yang dimulai C.",o:["Arjuna dan Cakra","Cakra dan Bintang","Arjuna dan Bintang","Tidak ada"],a:1,e:"Bintang seharusnya berada sebelum Cakra.",h:"Bandingkan posisi Bintang dengan Cakra."},
+  {q:"Kamu harus memperbaiki rak tersebut. Pilihan tindakan dan alasan utama mana yang paling tepat?",c:"Kondisi awal: Arjuna → Cakra → Bintang. Aturan: A–Z. Identitas nama arsip tidak boleh diubah.",o:["Pindahkan Bintang sebelum Cakra, karena urutan A–Z menentukan lokasi.","Ganti nama Bintang agar cocok dengan rak.","Pindahkan Arjuna ke akhir karena rak sudah penuh.","Biarkan, karena semua arsip masih berada pada rak yang sama."],a:0,e:"Perbaikan lokasi dilakukan dengan menempatkan Bintang sebelum Cakra sesuai aturan A–Z.",h:"Pilih alasan yang menghubungkan kondisi, aturan, dan tindakan koreksi."}
+ ]},
+ {title:"Unit Kode",icon:"🏷️",skill:"Mengenali fungsi arsip, memilih kode, dan membandingkan kelompok",qs:[
+  {q:"Baca konteks. Sebuah map berisi <b>Permintaan Pembelian 20 Laptop Kantor</b>. Aturan kode: <b>PNG = Pengadaan</b>, <b>KPG = Kepegawaian</b>, <b>KEU = Keuangan</b>. Fungsi utama arsip adalah…",c:"Identifikasi dilakukan dari kegiatan yang dibahas dalam isi dokumen.",o:["Pengadaan","Kepegawaian","Keuangan","Persuratan umum"],a:0,e:"Permintaan pembelian laptop merupakan kegiatan pengadaan.",h:"Tanyakan: kegiatan apa yang dilakukan dalam dokumen?"},
+  {q:"Bandingkan dua pilihan kelompok untuk dokumen tersebut: <b>PNG / Pengadaan</b> dan <b>KPG / Kepegawaian</b>. Mana yang sesuai dengan aturan?",c:"Dokumen membahas pembelian laptop kantor, bukan data atau kegiatan pegawai.",o:["PNG / Pengadaan","KPG / Kepegawaian","Keduanya sama","Tidak perlu kelompok"],a:0,e:"PNG sesuai dengan fungsi pengadaan.",h:"Cocokkan isi dokumen dengan arti kode."},
+  {q:"Dokumen <b>PNG-2026-014</b> ditemukan pada kelompok KPG. Apa keputusan dan alasan utama yang paling tepat?",c:"Aturan: kode fungsi pada arsip harus sama dengan kelompok penyimpanannya.",o:["Pindahkan ke kelompok PNG, karena kode PNG berarti Pengadaan.","Ubah kode PNG menjadi KPG, karena lokasinya sudah benar.","Biarkan, karena tahun 2026 sudah cocok.","Pindahkan ke kelompok mana saja yang kosong."],a:0,e:"Kode arsip menjadi dasar kelompok; lokasi yang salah diperbaiki, bukan kode arsipnya.",h:"Pertahankan identitas arsip dan koreksi lokasinya."}
+ ]},
+ {title:"Unit Prosedur",icon:"📥",skill:"Mengikuti urutan prosedur penempatan arsip",qs:[
+  {q:"Baca konteks. Arsip <b>PNG-2026-014</b> berstatus <b>aktif</b>. Aturan lokasi: arsip aktif → Rak Aktif; urutan rak → fungsi → tahun → nomor. Identitas lokasi yang tepat adalah…",c:"PNG berarti Pengadaan dan arsip berstatus aktif.",o:["Rak Aktif / PNG / 2026 / 014","Record Center / PNG / 2026 / 014","Rak Aktif / KPG / 2026 / 014","Rak Aktif / PNG / 2025 / 014"],a:0,e:"Status aktif menentukan Rak Aktif; PNG, 2026, dan 014 melengkapi lokasi.",h:"Periksa status, fungsi, tahun, lalu nomor."},
+  {q:"Bandingkan dua prosedur berikut. <b>A:</b> pilih rak terdekat lalu masukkan arsip. <b>B:</b> identifikasi arsip → cek kode/status → tentukan lokasi → tempatkan → periksa label. Mana yang sesuai aturan kasus?",c:"Prosedur dirancang agar arsip tidak salah tempat sebelum identitas dan status diverifikasi.",o:["A","B","Keduanya","Tidak ada"],a:1,e:"B mengikuti langkah verifikasi sebelum penempatan.",h:"Cari prosedur yang melakukan pemeriksaan sebelum arsip ditempatkan."},
+  {q:"Arsip <b>KPG-2025-021</b> sudah inaktif. Pilih keputusan dan alasan utama yang paling tepat.",c:"Aturan: arsip inaktif masuk Record Center, tetapi kelompok, tahun, dan nomor tetap mengikuti identitas arsip.",o:["Record Center / KPG / 2025 / 021, karena status inaktif menentukan area penyimpanan.","Rak Aktif / KPG / 2025 / 021, karena semua arsip harus mudah diambil.","Record Center / PNG / 2025 / 021, karena Record Center lebih penting daripada kode.","Meja pegawai, karena arsip masih memiliki nilai guna."],a:0,e:"Status inaktif menentukan area Record Center; kode dan identitas arsip tetap dipertahankan.",h:"Bedakan aturan status penyimpanan dari aturan kelompok."}
+ ]},
+ {title:"Unit Audit Arsip",icon:"🔎",skill:"Membandingkan bukti, menemukan salah simpan, dan memperbaiki",qs:[
+  {q:"Baca konteks audit. Aturan pemeriksaan: <b>kode = kelompok</b>, <b>tahun = label lokasi</b>, <b>status = area</b>. Arsip <b>PNG-2026-014 aktif</b> ditemukan di <b>Record Center / PNG / 2026 / 014</b>. Bagian yang tidak sesuai adalah…",c:"Bandingkan satu per satu informasi arsip dengan label lokasi.",o:["Kode","Tahun","Status/area","Nomor"],a:2,e:"Kode, tahun, dan nomor cocok; arsip aktif seharusnya berada di Rak Aktif.",h:"Bandingkan kata 'aktif' dengan area penyimpanan."},
+  {q:"Arsip <b>KPG-2025-021 aktif</b> ditemukan di <b>Rak Aktif / PNG / 2025 / 021</b>. Setelah membandingkan data, kesalahan utamanya adalah…",c:"KPG berarti Kepegawaian, sedangkan lokasi menunjukkan PNG/Pengadaan.",o:["Kelompok fungsi","Tahun","Nomor","Status"],a:0,e:"KPG tidak cocok dengan kelompok PNG.",h:"Bandingkan kode KPG dengan kode kelompok pada lokasi."},
+  {q:"Pilih tindakan koreksi dan alasan utama untuk kasus KPG-2025-021 di kelompok PNG.",c:"Aturan koreksi: verifikasi identitas terlebih dahulu, kemudian perbaiki lokasi tanpa mengubah kode arsip.",o:["Pindahkan ke KPG / 2025 / 021, karena kode KPG harus sesuai dengan kelompok penyimpanan.","Ubah kode menjadi PNG, karena rak menunjukkan PNG.","Buang arsip, karena pernah salah simpan.","Biarkan, karena tahun dan nomor sudah benar."],a:0,e:"Kesalahan ada pada kelompok lokasi; kode KPG tetap menjadi identitas arsip.",h:"Tanyakan: mana yang harus diubah, kode arsip atau lokasi?"}
+ ]},
+ {title:"Final Challenge",icon:"🏆",skill:"Mengintegrasikan aturan, audit, koreksi, dan alasan",qs:[
+  {q:"Baca konteks final. Aturan: <b>ABJ</b> untuk pengurutan nama; <b>PNG = Pengadaan</b>; arsip aktif di <b>Rak Aktif</b>; urutan lokasi PNG = fungsi → tahun → nomor. Dokumen <b>Kontrak PT Bintang</b> berkode <b>PNG-2026-014</b> dan aktif. Pilihan lokasi yang tepat adalah…",c:"Nama Bintang memberi konteks nama arsip; kode dan status menentukan lokasi pada sistem fungsi.",o:["Rak Aktif / PNG / 2026 / 014","Record Center / PNG / 2026 / 014","Rak Aktif / ABJ / 2026 / 014","Rak Aktif / PNG / 2025 / 014"],a:0,e:"PNG menentukan Pengadaan, aktif menentukan Rak Aktif, lalu tahun dan nomor melengkapi lokasi.",h:"Gabungkan kode + status + tahun + nomor."},
+  {q:"Hasil audit: <b>Kontrak PT Bintang PNG-2026-014 aktif</b> berada di <b>Rak Aktif / PNG / 2025 / 014</b>. Bandingkan arsip dengan lokasi. Apa yang harus diperbaiki?",c:"Kode, fungsi, status, dan nomor sudah cocok. Hanya tahun lokasi yang berbeda.",o:["Kode PNG","Status aktif","Tahun lokasi dari 2025 menjadi 2026","Nama PT Bintang"],a:2,e:"Arsip tahun 2026 harus berada pada lokasi tahun 2026.",h:"Cari satu unsur yang berbeda antara identitas arsip dan label lokasi."},
+  {q:"Guru ingin mengetahui cara berpikirmu. Pilih alasan utama yang paling lengkap untuk koreksi final.",c:"Jawaban harus menunjukkan hubungan antara bukti pada arsip, aturan, kesalahan, dan tindakan.",o:["'Saya memindahkannya karena menurut saya rak lain lebih baik.'","'Saya memindahkannya karena nama PT Bintang lebih dikenal.'","'PNG-2026-014 berstatus aktif, jadi masuk Rak Aktif kelompok PNG; karena tahun arsip 2026 tetapi label 2025, lokasi diperbaiki ke PNG/2026/014.'","'Saya memindahkannya karena rak 2025 sudah penuh.'"],a:2,e:"Alasan lengkap menyebut bukti, aturan, kesalahan, dan koreksi.",h:"Gunakan pola: bukti → aturan → kesalahan → perbaikan."}
+ ]}
+];
+
+let state={mission:0,q:0,xp:0,hearts:3,streak:0,correct:0,total:0,answers:[],attempts:{},hints:0,started:false};
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});updateTop()}
+function updateTop(){
+ document.getElementById('xp').textContent=state.xp;
+ document.getElementById('hearts').textContent=state.hearts;
+ document.getElementById('streak').textContent=state.streak;
+ const done=state.total,total=missions.reduce((a,m)=>a+m.qs.length,0);
+ document.getElementById('globalProgress').style.width=Math.min(100,done/total*100)+'%';
+}
+
+function startGame(){
+ state={mission:0,q:0,xp:0,hearts:3,streak:0,correct:0,total:0,answers:[],attempts:{},hints:0,started:true};
+ renderMap();show('map');
+}
+
+function renderMap(){
+ const el=document.getElementById('missionMap');el.innerHTML='';
+ missions.forEach((m,i)=>{
+  const unlocked=i===0||state.mission>=i;
+  const done=state.mission>i;
+  const d=document.createElement('div');d.className='mission '+(!unlocked?'locked ':'')+(done?'done':'');
+  const thumbs=[
+      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=500&q=80",
+      "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=500&q=80",
+      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=500&q=80",
+      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=500&q=80",
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=500&q=80"
+    ];
+    d.innerHTML=`<div class="mission-icon">${done?'✓':m.icon}</div><div class="mission-thumb"><img src="${thumbs[i]}" alt="${m.title}" loading="lazy"></div><div class="mission-info"><b>Unit ${i+1} · ${m.title}</b><small>${m.skill}</small></div><button class="btn ${unlocked?'primary':'secondary'}" ${unlocked?'':'disabled'}>${i===missions.length-1?'Final Challenge':(done?'Lihat':'Mulai')}</button>`;
+  d.querySelector('button').onclick=()=>{state.mission=i;state.q=0;loadQuestion()};
+  el.appendChild(d);
+ });
+ updateTop();
+}
+
+function loadQuestion(){
+ const m=missions[state.mission],q=m.qs[state.q];
+ document.getElementById('missionTitle').textContent=m.title;
+ document.getElementById('qcount').textContent=`Tantangan ${state.q+1}/${m.qs.length}`;
+ document.getElementById('skillTag').textContent=m.skill;
+ document.getElementById('question').innerHTML=q.q;
+ document.getElementById('caseText').innerHTML='🏢 <b>Kasus kantor:</b> '+q.c;
+ const opts=document.getElementById('options');opts.innerHTML='';
+ q.o.forEach((x,i)=>{const b=document.createElement('button');b.className='option';b.innerHTML=`<b>${String.fromCharCode(65+i)}.</b> ${x}`;b.onclick=()=>choose(i);opts.appendChild(b)});
+ const f=document.getElementById('feedback');f.className='feedback';f.innerHTML='';
+ document.getElementById('nextBtn').disabled=true;document.getElementById('hintBtn').disabled=false;document.getElementById('feedbackBtn').disabled=true;document.getElementById('retryBtn').disabled=true;
+ show('game');
+}
+function choose(i){
+ const m=missions[state.mission],q=m.qs[state.q],key=state.mission+'-'+state.q;
+ const opts=[...document.querySelectorAll('.option')];
+ if(document.getElementById('nextBtn').disabled===false)return;
+ state.attempts[key]=(state.attempts[key]||0)+1;
+ const attempt=state.attempts[key],good=i===q.a;
+ opts.forEach((btn,j)=>{btn.classList.remove('selected','wrong','correct');if(j===i)btn.classList.add('selected');});
+ state.total++;
+ if(good){
+   state.correct++;state.xp+=10;state.streak++;
+   opts[q.a].classList.add('correct');
+   state.answers.push({mission:state.mission,q:state.q,good:true,attempt});
+   showFeedback(true);
+   document.getElementById('nextBtn').disabled=false;document.getElementById('hintBtn').disabled=true;
+ }else{
+   state.hearts=Math.max(0,state.hearts-1);state.streak=0;
+   opts[i].classList.add('wrong');
+   state.answers.push({mission:state.mission,q:state.q,good:false,attempt});
+   const f=document.getElementById('feedback');f.className='feedback show bad';
+   f.innerHTML=`❌ <b>Belum tepat.</b><div class="step"><b>Bagian yang sudah tepat:</b> Kamu sudah mencoba menghubungkan jawaban dengan informasi pada kasus.</div><div class="step"><b>Bagian yang belum tepat:</b> Pilihanmu belum sesuai dengan aturan yang harus diterapkan pada kasus ini.</div><div class="step"><b>Mengapa:</b> ${q.e}</div><div class="step"><b>Petunjuk:</b> ${state.mission===missions.length-1?'Periksa kembali satu bukti utama pada kasus; jangan mencari aturan baru.':q.h}</div><div class="attempt-note">Kesempatan mencoba kembali tersedia. Perhatikan feedback lalu pilih lagi.</div>`;
+   document.getElementById('feedbackBtn').disabled=false;
+   document.getElementById('retryBtn').disabled=false;
+   document.getElementById('nextBtn').disabled=true;
+   document.getElementById('hintBtn').disabled=false;
+ }
+ updateTop();
+}
+
+function showFeedback(good){
+ const m=missions[state.mission],q=m.qs[state.q],f=document.getElementById('feedback');
+ f.className='feedback show '+(good?'good':'bad');
+ f.innerHTML=(good?'✅ <b>Tepat!</b> Keputusan sesuai aturan kasus.':'💡 <b>Feedback:</b>')+`<div class="step"><b>Penjelasan:</b> ${q.e}</div>`;
+ document.getElementById('feedbackBtn').disabled=false;
+ document.getElementById('retryBtn').disabled=true;
+}
+
+function retryQuestion(){
+ const opts=[...document.querySelectorAll('.option')];
+ opts.forEach(b=>b.classList.remove('selected','wrong','correct'));
+ const f=document.getElementById('feedback');f.className='feedback';f.innerHTML='';
+ document.getElementById('nextBtn').disabled=true;
+ document.getElementById('retryBtn').disabled=true;
+ document.getElementById('hintBtn').disabled=false;
+}
+
+function showHint(){
+ const q=missions[state.mission].qs[state.q],f=document.getElementById('feedback');
+ state.hints++;
+ const minimal=state.mission===missions.length-1;
+ f.className='feedback show';
+ f.innerHTML='💡 <b>Petunjuk:</b> '+(minimal?'Periksa bukti yang berbeda antara dokumen dan lokasi. Terapkan hanya aturan yang sudah tersedia.':q.h);
+ document.getElementById('feedbackBtn').disabled=false;
+ updateTop();
+}
+
+
+function nextQuestion(){
+ if(state.q<missions[state.mission].qs.length-1){state.q++;loadQuestion()}
+ else if(state.mission<missions.length-1){state.mission++;state.q=0;renderMap();show('map')}
+ else finish();
+}
+function finish(){
+ const unique=missions.reduce((n,m)=>n+m.qs.length,0);
+ const successful=new Set(state.answers.filter(a=>a.good).map(a=>a.mission+'-'+a.q)).size;
+ const pct=Math.round(successful/unique*100);
+ document.getElementById('scoreBig').textContent=pct+'%';
+ document.getElementById('resultText').innerHTML=`Ketepatan keputusan akhir: <b>${successful} dari ${unique}</b> indikator/pertanyaan inti. Total percobaan tercatat: <b>${state.total}</b>.`;
+ const badges=[];if(pct>=80)badges.push('🏆 Target ketepatan tercapai');else badges.push('🌱 Terus berlatih');
+ document.getElementById('badges').innerHTML=badges.map(x=>`<div class="badge">${x}</div>`).join('');
+ buildReport();show('result');
+}
+
+function buildReport(){
+ const el=document.getElementById('learningReport');el.innerHTML='';
+ const totalUnique=missions.reduce((n,m)=>n+m.qs.length,0);
+ missions.forEach((m,i)=>{
+   const qs=m.qs.length, succ=new Set(state.answers.filter(a=>a.mission===i&&a.good).map(a=>a.q)).size;
+   const tries=state.answers.filter(a=>a.mission===i).length;
+   const retried=new Set(state.answers.filter(a=>a.mission===i).filter(a=>a.attempt>1).map(a=>a.q)).size;
+   const pct=Math.round(succ/qs*100);
+   el.innerHTML+=`<div class="break"><b>${m.icon} ${m.title}</b><span style="float:right">${succ}/${qs} tepat</span><div class="bar"><i style="width:${pct}%"></i></div><small class="note">Percobaan: ${tries} · Soal yang dicoba ulang: ${retried} · Petunjuk: ${state.hints} total sepanjang game.</small></div>`;
+ });
+ const finalI=missions.length-1, finalQs=missions[finalI].qs.length, finalSucc=new Set(state.answers.filter(a=>a.mission===finalI&&a.good).map(a=>a.q)).size;
+ const retries=state.answers.filter(a=>a.mission===finalI&&a.attempt>1).length;
+ el.innerHTML+=`<div class="break"><b>🏆 Final Challenge</b><p class="note">Hasil: <b>${finalSucc}/${finalQs}</b> pertanyaan inti berhasil. Percobaan ulang pada Final Challenge: <b>${retries}</b>.</p><p class="note">Penggunaan petunjuk: <b>${state.hints}</b> kali. Perubahan jawaban setelah feedback ditandai melalui percobaan dengan nomor > 1.</p></div>`;
+}
+
+function showReport(){buildReport();show('report')}
+
+function restart(){startGame()}
+updateTop();
+</script>
+</body>
+</html>
